@@ -32,26 +32,29 @@
     </el-row>
     <div>
       <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="50%">
-        <el-form :model="form" rules="rules" ref="form">
+        <!-- 有些人的代码,丑得像一桩冤案。——2024.6.27 -->
+        <!-- 没想到，改了一晚上的bug，就是为了找到前端校验失败的原因，结果居然是少一个冒号导致的。服了。 -->
+        <!-- 警钟撅烂，el-form的rules必须前加 ： -->
+        <el-form :model="bookform" :rules="rules" ref="bookform">
           <el-form-item label="姓名" prop="name" label-width="15%">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
+            <el-input v-model="bookform.name" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="身份证号" prop="idNumber" label-width="15%">
-            <el-input v-model="form.idNumber" autocomplete="off"></el-input>
+            <el-input v-model="bookform.idNumber" autocomplete="off"></el-input>
           </el-form-item>
           <!-- disabled-date没用啊啊啊啊啊 -->
           <el-form-item label="入住日期" prop="checkInDate" label-width="15%">
-            <el-date-picker v-model="form.checkInDate" type="date" placeholder="选择日期"
+            <el-date-picker v-model="bookform.checkInDate" type="date" placeholder="选择日期"
               :picker-options="checkInDateOptions"></el-date-picker>
           </el-form-item>
           <el-form-item label="登出日期" prop="checkOutDate" label-width="15%">
-            <el-date-picker v-model="form.checkOutDate" type="date" placeholder="选择日期"
+            <el-date-picker v-model="bookform.checkOutDate" type="date" placeholder="选择日期"
               :picker-options="checkOutDateOptions"></el-date-picker>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false, submit()">确 定</el-button>
+          <el-button type="primary" @click="submit('bookform')">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -104,11 +107,17 @@ export default {
     return {
       rooms: [],
       dialogFormVisible: false,
-      form: {
+      bookform: {
         name: '',
         idNumber: '',
         checkInDate: '',
         checkOutDate: '',
+      },
+      rules: {
+        name: [{ validator: validateName, trigger: 'blur' }],
+        idNumber: [{ validator: validateIdNumber, trigger: 'blur' }],
+        checkInDate: [{ validator: validateCheckInDate, trigger: 'blur' }],
+        checkOutDate: [{ validator: validateCheckOutDate, trigger: 'blur' }]
       },
       // 日期选择器配置
       // disabled-date没用啊啊啊啊啊啊
@@ -129,12 +138,6 @@ export default {
           return time.getTime() < checkInDate.getTime() || time.getTime() > maxCheckOutDate.getTime();
         }
       },
-      rules: {
-        name: [{ validator: validateName, trigger: 'blur' }],
-        idNumber: [{ validator: validateIdNumber, trigger: 'blur' }],
-        checkInDate: [{ validator: validateCheckInDate, trigger: 'blur' }],
-        checkOutDate: [{ validator: validateCheckOutDate, trigger: 'blur' }]
-      }
 
     }
   },
@@ -158,11 +161,11 @@ export default {
       this.$router.push("/user");
     },
     bookadd() {
-      this.form = {};
+      // this.form = {};
       this.dialogFormVisible = true;
     },
-    submit() {
-      this.$refs.form.validate((valid) => {
+    submit(formname) {
+      this.$refs[formname].validate((valid) => {
         if(valid){
           const user = JSON.parse(localStorage.getItem('user'));
           const hotel = JSON.parse(localStorage.getItem('currentHotel'));
@@ -174,6 +177,7 @@ export default {
             checkInDate: this.form.checkInDate,
             checkOutDate: this.form.checkOutDate,
           };
+          alert('submit');
           console.log('bookinfo', bookinfo);
           this.dialogFormVisible = false;
           

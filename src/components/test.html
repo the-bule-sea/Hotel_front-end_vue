@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('/path/to/your/custom/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            width: 400px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .login-box .el-input {
+            margin-bottom: 20px;
+        }
+        .login-box .el-button {
+            width: 100%;
+        }
+        .login-box .forgot-password {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .login-description {
+            margin-top: 20px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>统一身份认证登录</h2>
+            <el-form action="https://ids.shiep.edu.cn/authserver/login?service=https%3A%2F%2Fehall.shiep.edu.cn%2F" method="post">
+                <el-form-item>
+                    <el-input placeholder="用户名" prefix-icon="el-icon-user" name="username" required></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-input placeholder="密码" type="password" prefix-icon="el-icon-lock" name="password" required autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-checkbox name="rememberMe">一周内免登录</el-checkbox>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" native-type="submit">登录</el-button>
+                </el-form-item>
+                <a href="https://ids-service.shiep.edu.cn/" class="forgot-password">忘记密码?</a>
+            </el-form>
+            <p class="login-description">登录说明：用户名为工号或学号，初始密码为18位身份证号码的倒数第七位至倒数第二位。如：310110198708123456，则密码为：812345。</p>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        new Vue({
+            el: '.login-container'
+        });
+    </script>
+</body>
+</html>

@@ -34,6 +34,7 @@
       <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="50%">
         <!-- 有些人的代码,丑得像一桩冤案。——2024.6.27 -->
         <!-- 没想到，改了一晚上的bug，就是为了找到前端校验失败的原因，结果居然是少一个冒号导致的。服了。 -->
+        <!-- 这次能找到原因，还是看了console的报错信息：Invalid prop: type check failed for prop "rules". Expected Object, got String with value "rules". -->
         <!-- 警钟撅烂，el-form的rules必须前加 ： -->
         <el-form :model="bookform" :rules="rules" ref="bookform">
           <el-form-item label="姓名" prop="name" label-width="15%">

@@ -31,25 +31,22 @@
       </el-col>
     </el-row>
     <div>
-      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="30%">
-        <el-form :model="form">
-          <el-form-item label="姓名" label-width="15%">
+      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="50%">
+        <el-form :model="form" rules="rules" ref="form">
+          <el-form-item label="姓名" prop="name" label-width="15%">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="日期">
-            <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期"
-              end-placeholder="结束日期" class="custom-date-picker">
-            </el-date-picker>
+          <el-form-item label="身份证号" prop="idNumber" label-width="15%">
+            <el-input v-model="form.idNumber" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="性别" label-width="15%">
-            <el-radio v-model="form.sex" label="男">男</el-radio>
-            <el-radio v-model="form.sex" label="女">女</el-radio>
+          <!-- disabled-date没用啊啊啊啊啊 -->
+          <el-form-item label="入住日期" prop="checkInDate" label-width="15%">
+            <el-date-picker v-model="form.checkInDate" type="date" placeholder="选择日期"
+              :picker-options="checkInDateOptions"></el-date-picker>
           </el-form-item>
-          <el-form-item label="年龄" label-width="15%">
-            <el-input v-model="form.age" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="电话" label-width="15%">
-            <el-input v-model="form.phone" autocomplete="off"></el-input>
+          <el-form-item label="登出日期" prop="checkOutDate" label-width="15%">
+            <el-date-picker v-model="form.checkOutDate" type="date" placeholder="选择日期"
+              :picker-options="checkOutDateOptions"></el-date-picker>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -75,11 +72,71 @@ export default {
     }
   },
   data() {
-    return {
-        rooms:[],
-        dialogFormVisible: false,
-        form:{}
+    // form表单校验
+    const validateName = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入姓名'));
+      } else {
+        callback();
+      }
     };
+    const validateIdNumber = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入身份证号'));
+      } else {
+        callback();
+      }
+    };
+    const validateCheckInDate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择入住日期'));
+      } else {
+        callback();
+      }
+    };
+    const validateCheckOutDate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择登出日期'));
+      } else {
+        callback();
+      }
+    };
+    return {
+      rooms: [],
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        idNumber: '',
+        checkInDate: '',
+        checkOutDate: '',
+      },
+      // 日期选择器配置
+      // disabled-date没用啊啊啊啊啊啊
+      // 入住日期不能小于今天，登出日期不能小于入住日期，登出日期不能大于入住日期+30天
+      checkInDateOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        }
+      },
+      checkOutDateOptions: {
+        disabledDate: (time) => {
+          if (!this.form.checkInDate) {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
+          const checkInDate = new Date(this.form.checkInDate);
+          const maxCheckOutDate = new Date(checkInDate);
+          maxCheckOutDate.setDate(checkInDate.getDate() + 30);
+          return time.getTime() < checkInDate.getTime() || time.getTime() > maxCheckOutDate.getTime();
+        }
+      },
+      rules: {
+        name: [{ validator: validateName, trigger: 'blur' }],
+        idNumber: [{ validator: validateIdNumber, trigger: 'blur' }],
+        checkInDate: [{ validator: validateCheckInDate, trigger: 'blur' }],
+        checkOutDate: [{ validator: validateCheckOutDate, trigger: 'blur' }]
+      }
+
+    }
   },
   //load()不对
   // 在 Vue 组件中，生命周期钩子函数是用于在特定的时刻执行一些代码的，
@@ -91,22 +148,45 @@ export default {
   methods: {
     fetchHotelDetail() {
       request.get(`/hotel/${this.hotel.id}`)//注意反引号
-      .then(res => {
-        if(res.code === "0"){
-          this.rooms = res.data;
-        }
-      })
+        .then(res => {
+          if (res.code === "0") {
+            this.rooms = res.data;
+          }
+        })
     },
     back() {
       this.$router.push("/user");
     },
-    bookadd(){
+    bookadd() {
       this.form = {};
       this.dialogFormVisible = true;
+    },
+    submit() {
+      this.$refs.form.validate((valid) => {
+        if(valid){
+          const user = JSON.parse(localStorage.getItem('user'));
+          const hotel = JSON.parse(localStorage.getItem('currentHotel'));
+          const bookinfo = {
+            userID: user.userId,
+            hotelID: hotel.id,
+            userName: this.form.name,
+            idNumber: this.form.idNumber,
+            checkInDate: this.form.checkInDate,
+            checkOutDate: this.form.checkOutDate,
+          };
+          console.log('bookinfo', bookinfo);
+          this.dialogFormVisible = false;
+          
+        }
+        
+      })
+
+
+
     }
-    
-    
- }
+
+
+  }
 };
 </script>
 
@@ -126,12 +206,5 @@ export default {
   height: 1px;
   background-color: #ddd;
   margin: 10px 0;
-}
-
-</style>
-
-<style scoped>
-.custom-date-picker {
-  width: 100%;
 }
 </style>

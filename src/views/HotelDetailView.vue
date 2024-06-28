@@ -11,7 +11,7 @@
     <!-- <el-button type="primary" @click="fetchHotelDetail()">test</el-button> -->
     <h3>房间信息</h3>
     <el-row>
-      <el-col :span="24" v-for="room in rooms" :key="room.Id">
+      <el-col :span="24" v-for="room in rooms" :key="room.roomID">
         <el-card :body-style="{ padding: '0px' }" class="room-card">
           <el-row>
             <el-col :span="8">
@@ -23,7 +23,7 @@
                 <div class="name-divider"></div>
                 <p>价格: {{ room.price }}</p>
                 <p>状态: {{ room.status }}</p>
-                <el-button type="primary" @click="bookadd(room)">预定房间</el-button>
+                <el-button type="primary" @click="bookadd(room.roomID)">预定房间</el-button>
               </div>
             </el-col>
           </el-row>
@@ -45,12 +45,21 @@
           </el-form-item>
           <!-- disabled-date没用啊啊啊啊啊 -->
           <el-form-item label="入住日期" prop="checkInDate" label-width="15%">
-            <el-date-picker v-model="bookform.checkInDate" type="date" placeholder="选择日期"
-              :picker-options="checkInDateOptions"></el-date-picker>
+            <el-date-picker
+              v-model="bookform.checkInDate"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="checkInDateOptions"
+              @change="updateCheckOutDateOptions"
+            ></el-date-picker>
           </el-form-item>
           <el-form-item label="登出日期" prop="checkOutDate" label-width="15%">
-            <el-date-picker v-model="bookform.checkOutDate" type="date" placeholder="选择日期"
-              :picker-options="checkOutDateOptions"></el-date-picker>
+            <el-date-picker
+              v-model="bookform.checkOutDate"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="checkOutDateOptions"
+            ></el-date-picker>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -63,7 +72,7 @@
 </template>
 
 <script>
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 export default {
   name: "HotelDetailView",
@@ -72,53 +81,58 @@ export default {
       type: Object,
       required: true,
       // 一开始没有用localStorage，所以刷新后，vuerouter就挂了。
-      default: () => JSON.parse(localStorage.getItem('currentHotel'))
+      default: () => JSON.parse(localStorage.getItem("currentHotel"))
     }
   },
   data() {
     // form表单校验
     const validateName = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入姓名'));
+        callback(new Error("请输入姓名"));
       } else {
         callback();
       }
     };
     const validateIdNumber = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入身份证号'));
-      } else {
+        callback(new Error("请输入身份证号"));
+      }else if(value.length!=18){
+        callback(new Error("身份证号长度必须为18位"));
+      }else if(!/^\d{6}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\d|3[0-1])\d{3}(\d|X)$/i.test(value)){
+        callback(new Error("身份证号格式错误"));
+      }else {
         callback();
       }
     };
     const validateCheckInDate = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请选择入住日期'));
+        callback(new Error("请选择入住日期"));
       } else {
         callback();
       }
     };
     const validateCheckOutDate = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请选择登出日期'));
+        callback(new Error("请选择登出日期"));
       } else {
         callback();
       }
     };
     return {
+      currentRoomId: null,
       rooms: [],
       dialogFormVisible: false,
       bookform: {
-        name: '',
-        idNumber: '',
-        checkInDate: '',
-        checkOutDate: '',
+        name: "",
+        idNumber: "",
+        checkInDate: "",
+        checkOutDate: ""
       },
       rules: {
-        name: [{ validator: validateName, trigger: 'blur' }],
-        idNumber: [{ validator: validateIdNumber, trigger: 'blur' }],
-        checkInDate: [{ validator: validateCheckInDate, trigger: 'blur' }],
-        checkOutDate: [{ validator: validateCheckOutDate, trigger: 'blur' }]
+        name: [{ validator: validateName, trigger: "blur" }],
+        idNumber: [{ validator: validateIdNumber, trigger: "blur" }],
+        checkInDate: [{ validator: validateCheckInDate, trigger: "blur" }],
+        checkOutDate: [{ validator: validateCheckOutDate, trigger: "blur" }]
       },
       // 日期选择器配置
       // disabled-date没用啊啊啊啊啊啊
@@ -129,18 +143,20 @@ export default {
         }
       },
       checkOutDateOptions: {
-        disabledDate: (time) => {
-          if (!this.form.checkInDate) {
+        disabledDate: time => {
+          if (!this.bookform.checkInDate) {
             return time.getTime() < Date.now() - 8.64e7;
           }
           const checkInDate = new Date(this.form.checkInDate);
           const maxCheckOutDate = new Date(checkInDate);
           maxCheckOutDate.setDate(checkInDate.getDate() + 30);
-          return time.getTime() < checkInDate.getTime() || time.getTime() > maxCheckOutDate.getTime();
+          return (
+            time.getTime() < checkInDate.getTime() ||
+            time.getTime() > maxCheckOutDate.getTime()
+          );
         }
-      },
-
-    }
+      }
+    };
   },
   //load()不对
   // 在 Vue 组件中，生命周期钩子函数是用于在特定的时刻执行一些代码的，
@@ -151,46 +167,71 @@ export default {
   },
   methods: {
     fetchHotelDetail() {
-      request.get(`/hotel/${this.hotel.id}`)//注意反引号
+      request
+        .get(`/hotel/${this.hotel.id}`) //注意反引号
         .then(res => {
           if (res.code === "0") {
             this.rooms = res.data;
+            console.log(this.rooms);
           }
-        })
+        });
     },
     back() {
       this.$router.push("/user");
     },
-    bookadd() {
-      // this.form = {};
+    bookadd(roomID) {
       this.dialogFormVisible = true;
+      this.bookform = {};
+      this.currentRoomId = roomID;
+      console.log(this.currentRoomId);
+    },
+    updateCheckOutDateOptions() {
+      this.checkOutDateOptions.disabledDate = time => {
+        if (!this.bookform.checkInDate) {
+          return time.getTime() < Date.now() - 8.64e7;
+        }
+        const checkInDate = new Date(this.bookform.checkInDate);
+        const maxCheckOutDate = new Date(checkInDate);
+        maxCheckOutDate.setDate(checkInDate.getDate() + 30);
+        return (
+          time.getTime() < checkInDate.getTime() ||
+          time.getTime() > maxCheckOutDate.getTime()
+        );
+      };
     },
     submit(formname) {
-      this.$refs[formname].validate((valid) => {
-        if(valid){
-          const user = JSON.parse(localStorage.getItem('user'));
-          const hotel = JSON.parse(localStorage.getItem('currentHotel'));
+      this.$refs[formname].validate(valid => {
+        if (valid) {
+          const user = JSON.parse(localStorage.getItem("user"));
+          const hotel = JSON.parse(localStorage.getItem("currentHotel"));
           const bookinfo = {
             userID: user.userId,
             hotelID: hotel.id,
-            userName: this.form.name,
-            idNumber: this.form.idNumber,
-            checkInDate: this.form.checkInDate,
-            checkOutDate: this.form.checkOutDate,
+            roomID: this.currentRoomId,
+            bookName: this.bookform.name,
+            idNumber: this.bookform.idNumber,
+            checkInDate: this.bookform.checkInDate,
+            checkOutDate: this.bookform.checkOutDate
           };
-          alert('submit');
-          console.log('bookinfo', bookinfo);
+          alert("submit");
+          console.log("bookinfo", bookinfo);
           this.dialogFormVisible = false;
-          
+          request.post("/book/room", bookinfo).then(res => {
+            if (res.code === "0") {
+              this.$message({
+                type: "success",
+                message: "预订成功"
+              });
+            } else {
+              this.$message({
+                type: "error",
+                message: res.msg
+              });
+            }
+          });
         }
-        
-      })
-
-
-
+      });
     }
-
-
   }
 };
 </script>
@@ -213,3 +254,20 @@ export default {
   margin: 10px 0;
 }
 </style>
+
+// 关于这里用到的正则表达式。
+//       ^: 匹配字符串的开始。
+// \d{6}: 匹配前六位数字，这通常代表身份证号码的行政区划代码。
+// (18|19|20): 匹配“18”或“19”或“20”，表示世纪部分。这个部分用于确定出生年份的世纪部分，如“1980”或“2005”。
+// \d{2}: 匹配两位数字，表示年份的后两位，如“80”或“05”。
+// (0[1-9]|1[0-2]): 匹配月份。具体来说：
+// 0[1-9] 匹配01到09月
+// 1[0-2] 匹配10到12月
+// (0[1-9]|[1-2]\d|3[0-1]): 匹配日期。具体来说：
+// 0[1-9] 匹配01到09日
+// [1-2]\d 匹配10到29日
+// 3[0-1] 匹配30到31日
+// \d{3}: 匹配任意三位数字，表示顺序码，通常包括性别信息。
+// (\d|X): 匹配一位数字或字母X，这表示校验码。身份证的最后一位可能是数字0-9或字母X。
+// $: 匹配字符串的结束。
+// i: 正则表达式标志，表示忽略大小写。

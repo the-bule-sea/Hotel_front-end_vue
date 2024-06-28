@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div class="register-box"
-      style="width: 450px; height: 530px; margin: 100px auto; ">
+    <div class="register-box" style="width: 450px; height: 530px; margin: 100px auto; ">
       <div style="width: 100%; height: 100px; font-size: 30px; line-height: 100px; text-align: center; color: white">
         欢迎注册</div>
       <div style="margin-top: 15px; text-align: center; height: 320px;">
@@ -44,26 +43,26 @@ import request from "@/utils/request";
 export default {
   name: "RegisterView",
   data() {
-    const validateName = (rule,value, callback) => {
+    const validateName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('用户名不能为空'));
-      }else{
+      } else {
         callback();
       }
     };
-    const validatePassword = (rule,value, callback) => {
+    const validatePassword = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('密码不能为空'));
-      }else{
+      } else {
         callback();
       }
     };
-    const validdatePassword2 = (rule,value, callback) => {
+    const validdatePassword2 = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请再次输入密码'));
-      }else if(value !== this.user.password){
+      } else if (value !== this.user.password) {
         callback(new Error('两次输入密码不一致!'));
-      }else{
+      } else {
         callback();
       }
     };
@@ -88,18 +87,16 @@ export default {
         return callback(new Error('身份证号不能为空'));
       }
       setTimeout(() => {
-        if (!Number.isInteger(Number(value))) {
-          callback(new Error('请输入数字值'));
+        if (value.toString().length !== 18) {
+          callback(new Error('请输入18位身份证号码!'));
+        } else if (!/^\d{6}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\d|3[0-1])\d{3}(\d|X)$/i.test(value)) {
+          callback(new Error("身份证号格式错误"));
         } else {
-          if (value.toString().length !== 18) {
-            callback(new Error('请输入18位身份证号码'));
-          } else {
-            callback();
-          }
+          callback();
         }
       })
     };
-    
+
     return {
       user: {
         userName: '',
@@ -108,21 +105,21 @@ export default {
         confirmPassword: '',
         idNumber: '',
       },
-      rules:{
-        userName:[
-          { required: true, validator: validateName, trigger: 'blur'}
+      rules: {
+        userName: [
+          { required: true, validator: validateName, trigger: 'blur' }
         ],
-        phone:[
-          { required: true, validator: validdatePhone, trigger: 'blur'}
+        phone: [
+          { required: true, validator: validdatePhone, trigger: 'blur' }
         ],
-        password:[
-          { required: true, validator: validatePassword, trigger: 'blur'}
+        password: [
+          { required: true, validator: validatePassword, trigger: 'blur' }
         ],
-        confirmPassword:[
-          { required: true, validator: validdatePassword2, trigger: 'blur'}
+        confirmPassword: [
+          { required: true, validator: validdatePassword2, trigger: 'blur' }
         ],
-        idNumber:[
-          { required: true, validator: validateIdNumber, trigger: 'blur'}
+        idNumber: [
+          { required: true, validator: validateIdNumber, trigger: 'blur' }
         ],
       },
     }
@@ -134,29 +131,31 @@ export default {
   methods: {
     register(user) {
       //其实下面这个提示代码可以不用了，算了放着吧
+      // 6.28：发现还真得用，得修改一下。
       this.$refs[user].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      console.log(this.user)
-      request.post("/user/register", this.user).then(res => {
-        if (res.code === '0') {
-          this.$message({
-            message: '注册成功',
-            type: 'success'
-          });
-          this.$router.push("/login");
+        if (valid) {
+          // alert('submit!');
+          console.log(this.user)
+          request.post("/user/register", this.user).then(res => {
+            if (res.code === '0') {
+              this.$message({
+                message: '注册成功',
+                type: 'success'
+              });
+              this.$router.push("/login");
+            } else {
+              this.$message({
+                message: res.msg,
+                type: 'error'
+              });
+            }
+          })
         } else {
-          this.$message({
-            message: res.msg,
-            type: 'error'
-          });
+          console.log('error submit!!');
+          return false;
         }
-      })
+      });
+
     },
     navLogin() {
       this.$router.push("/login")
@@ -166,14 +165,15 @@ export default {
 </script>
 
 <style>
-.register-box{
+.register-box {
   width: 100%;
   height: 100%;
-  background-color: rgba(40, 40, 40, 0.6); /* 灰黑色带透明效果 */
-  border: 6px solid rgba(255, 255, 255, 0.5); /* 浅白色边框 */
+  background-color: rgba(40, 40, 40, 0.6);
+  /* 灰黑色带透明效果 */
+  border: 6px solid rgba(255, 255, 255, 0.5);
+  /* 浅白色边框 */
   padding: 20px;
   box-sizing: border-box;
 
 }
-
 </style>

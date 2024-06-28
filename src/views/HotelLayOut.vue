@@ -3,10 +3,13 @@
     <el-container>
       <el-header style="padding: 0;">
         <el-menu
-          :default-active="activeIndex2"
+          :default-active="$route.path"
+          router
           class="el-menu-demo"
           mode="horizontal"
           @select="handleSelect"
+          @open="handleOpen"
+          @close="handleClose"
           background-color="#ffffff"
           text-color="#5678a8"
           active-text-color="#0086f6"
@@ -15,7 +18,7 @@
           <a href="https://www.ctrip.com/">
             <img src="../static/Hotel_logo2.png" style="width: 150px; position: relative; " />
           </a>
-          <el-menu-item index="/">购票大厅</el-menu-item>
+          <el-menu-item index="/user">购票大厅</el-menu-item>
           <el-submenu index="2">
             <template slot="title">我的工作台</template>
             <el-menu-item index="2-1">选项1</el-menu-item>
@@ -29,10 +32,8 @@
             </el-submenu>
           </el-submenu>
           <el-menu-item index="3" disabled>消息中心</el-menu-item>
-          <el-menu-item index="4">
-            <a href="https://www.ele.me" target="_blank">订单管理</a>
-          </el-menu-item>
-          <!-- 右侧显示登录用户信息 -->
+          <el-menu-item index="/user/historybook">订单管理</el-menu-item>
+          
           <div style="margin-left:auto; margin-right:30px; display: flex; align-items: center;">
             <el-dropdown>
                 <span class="el-dropdown-link" style="color: black;">
@@ -125,6 +126,9 @@ export default {
       localStorage.clear();
       //跳转到登录页
       this.$router.push("/login");
+    },
+    goToHistory(){
+      this.$router.push({name: "HistoryInfoView"});
     }
   }
 };

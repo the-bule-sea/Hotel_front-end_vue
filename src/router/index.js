@@ -10,6 +10,7 @@ import RegisterView from '../views/RegisterView.vue'
 import HotelLayOut from '../views/HotelLayOut.vue'
 import BookingView from '../views/BookingView.vue'
 import HotelDetailView from '../views/HotelDetailView.vue'
+import HistoryInfoView from '../views/HistoryInfoView.vue'
 
 Vue.use(VueRouter)
 
@@ -33,7 +34,7 @@ const routes = [
     {
         path: '/user',
         name: 'HotelLayOut',
-        meta:{
+        meta: {
             title: '写成旅行',
             keepAlive: true, // 需要被缓存
         },
@@ -54,11 +55,16 @@ const routes = [
                 props: route => {
                     const hotel = route.params.hotel || JSON.parse(localStorage.getItem('currentHotel'));
                     return { hotel };
-                  }
+                }
+            },
+            {
+                path: 'historybook',
+                name: 'HistoryInfoView',
+                component: HistoryInfoView
             }
         ]
     },
-    
+
     {
 
         path: '/admin/',
@@ -89,11 +95,11 @@ const router = new VueRouter({
 //配置路由守卫
 router.beforeEach((to, from, next) => {
     //利用路由守卫设置网页标题
-    window.document.title = to.meta.title == undefined?'写成旅行':to.meta.title
+    window.document.title = to.meta.title == undefined ? '写成旅行' : to.meta.title
     //判断是否登录
     if (to.path == '/login' || to.path == '/register') {
         next();//若登录或注册 则放行
-    } 
+    }
     const user = localStorage.getItem('user');//获取本地存储的用户信息
     if (!user && to.path != '/login' && to.path != '/register') {
         return next('/login');

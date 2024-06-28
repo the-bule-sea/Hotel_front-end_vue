@@ -213,7 +213,7 @@ export default {
             checkInDate: this.bookform.checkInDate,
             checkOutDate: this.bookform.checkOutDate
           };
-          alert("submit");
+          // alert("submit");
           console.log("bookinfo", bookinfo);
           this.dialogFormVisible = false;
           request.post("/book/room", bookinfo).then(res => {

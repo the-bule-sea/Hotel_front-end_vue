@@ -1,20 +1,20 @@
 <template>
   <div>
     <h1>订单信息</h1>
-    <el-button type="primary" @click="back()">返回主界面</el-button>
+    <!-- <el-button type="primary" @click="back()">返回主界面</el-button> -->
     <el-row>
       <el-col :span="24" v-for="book in bookings" :key="book.bookingID">
         <el-card :body-style="{ padding: '0px' }" class="booking-card">
           <el-row>
             <el-col :span="11">
-              <div style="padding: 14px">
+              <div style="padding: 10px">
                 <h3>订单酒店为：{{ book.hotelName }}</h3>
                 <p>入住日期: {{ formatDate(book.checkInDate) }}</p>
                 <p>登出日期: {{ formatDate(book.checkOutDate) }}</p>
               </div>
             </el-col>
             <el-col :span="11">
-              <div style="padding: 14px;">
+              <div style="padding: 10px;">
                 <p>状态: {{ book.bookStatus }}</p>
                 <p>入住用户：{{ book.bookName }}</p>
                 <p>订单价格为：{{ book.price }}</p>
@@ -23,9 +23,10 @@
             </el-col>
             <el-col :span="2">
               <div class="button-group">
-                <el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" >退订</el-button>
-                <el-button round v-if="book.bookStatus === '已预定未入住'" type="success" >付款</el-button>
-                <el-button round v-if="book.bookStatus !== '已预定未入住'" type="primary" @click="review(book)">评价</el-button>
+                <!-- 原来对不齐，套了三个div就行了 -->
+                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" @click="cancelBooking(bookingID)">退订</el-button></div>
+                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" >付款</el-button></div>
+                <div><el-button round v-if="book.bookStatus !== '已预定未入住'" type="primary" @click="review(book)">评价</el-button></div>
               </div>
             </el-col>
           </el-row>
@@ -77,6 +78,7 @@ export default {
   },
   methods: {
     fetchBookings() {
+      
       const user = JSON.parse(localStorage.getItem('user'));
       request.get(`/book/${user.userId}`)
         .then(res => {
@@ -111,6 +113,17 @@ export default {
         }
       });
     },
+    // 退订功能
+    cancelBooking(bookingID){
+      
+      request.post(`/book/cancelBooking/${bookingID}`)
+      .then(res => {
+          if (res.code === "0") {
+            this.$message.success('退订成功');
+            this.fetchBookings(); // 重新获取预订信息，刷新页面
+          }
+        });
+    },
     formatDate(dateTime){
       if (!dateTime) return '';
       // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00
@@ -126,13 +139,16 @@ export default {
   margin-bottom: 20px;
 }
 .button-group {
-  display: flex;
+  display:flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
   padding: 14px;
 }
+
+
+
 
 
 </style>

@@ -69,7 +69,7 @@ export default {
   methods: {
     fetchBookings() {
       const user = JSON.parse(localStorage.getItem('user'));
-      request.get(`/user/${user.userId}/bookings`)
+      request.get(`/book/${user.userId}`)
         .then(res => {
           if (res.code === "0") {
             this.bookings = res.data;

@@ -22,7 +22,6 @@
                 <h3>{{ room.roomTypeName }}</h3>
                 <div class="name-divider"></div>
                 <p>价格: {{ room.price }}</p>
-                <p>状态: {{ room.status }}</p>
                 <el-button type="primary" @click="bookadd(room.roomID)">预定房间</el-button>
               </div>
             </el-col>

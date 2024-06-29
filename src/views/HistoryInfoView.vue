@@ -8,26 +8,28 @@
           <el-row>
             <el-col :span="11">
               <div style="padding: 10px">
-                <h3>订单酒店为：{{ book.hotelName }}</h3>
+                <h2>订单酒店为：{{ book.hotelName }}</h2>
                 <p>入住日期: {{ formatDate(book.checkInDate) }}</p>
                 <p>登出日期: {{ formatDate(book.checkOutDate) }}</p>
+                <h3 style="color: #e6a23c">状态: {{ book.bookStatus }}</h3>
               </div>
             </el-col>
-            <el-col :span="11">
-              <div style="padding: 10px;">
-                <p>状态: {{ book.bookStatus }}</p>
+            <el-col :span="9">
+              <div style="padding: 9px;">
                 <p>入住用户：{{ book.bookName }}</p>
                 <p>订单价格为：{{ book.price }}</p>
                 <p>房间类型为：{{ book.roomTypeName }}</p>
+                <p>房间号为：{{ book.roomID }}</p>
               </div>
             </el-col>
-            <el-col :span="2">
+            <el-col :span="4">
               <div class="button-group">
                 <!-- 原来对不齐，套了三个div就行了 -->
                 <!-- 这个地方不能直接传bookingID，传book.bookingID才行 -->
                 <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" @click="cancelBooking(book.bookingID)">退订</el-button></div>
                 <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" @click="payBooking(book.bookingID), payDialogVisible = true">付款</el-button></div>
                 <div><el-button round v-if="book.bookStatus === '订单已支付'" type="primary" @click="review(book)">评价</el-button></div>
+                <div><el-button round v-if="book.bookStatus === '已评价'" type="primary" @click="viewReview(book.bookingID)">查看评价</el-button></div>
               </div>
             </el-col>
           </el-row>
@@ -36,7 +38,7 @@
     </el-row>
 
     <div>
-      <el-dialog title="写评论" :visible.sync="dialogFormVisible" width="50%">
+      <el-dialog title="评论内容" :visible.sync="dialogFormVisible" width="50%">
         <el-form :model="reviewForm" :rules="rules" ref="reviewForm">
           <el-form-item label="评论内容" prop="content" label-width="15%">
             <el-input v-model="reviewForm.content" type="textarea"></el-input>
@@ -104,6 +106,7 @@ export default {
     back() {
       this.$router.push("/user");
     },
+    // 评价
     review(book) {
       this.reviewForm.bookingID = book.bookingID;
       this.dialogFormVisible = true;
@@ -113,10 +116,11 @@ export default {
         if (valid) {
           const reviewData = {
             bookingID: this.reviewForm.bookingID,
-            content: this.reviewForm.content,
+            userID: JSON.parse(localStorage.getItem('user')).userId, // 获取当前用户ID
+            comment: this.reviewForm.content,
             rating: this.reviewForm.rating
           };
-          request.post('/reviews', reviewData)
+          request.post('book/reviews', reviewData)
             .then(res => {
               if (res.code === "0") {
                 this.dialogFormVisible = false;
@@ -124,6 +128,18 @@ export default {
                 this.fetchBookings(); // 重新获取预订信息，刷新页面
               }
             });
+        }
+      });
+    },
+    viewReview(bookingID){
+      request.get(`/book/getviews/${bookingID}`)
+      .then(res => {
+        if (res.code === "0") {
+          this.dialogFormVisible = true;
+          this.reviewForm.content = res.data.comment;
+          this.reviewForm.rating = res.data.rating;
+        } else {
+          this.$message.error('未找到相关评论');
         }
       });
     },

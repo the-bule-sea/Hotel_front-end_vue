@@ -85,7 +85,10 @@ export default {
         bookingID: null
       },
       rules: {
-        content: [{ required: true, message: '请输入评论内容', trigger: 'blur' }],
+        content: [
+          { required: true, message: '请输入评论内容', trigger: 'blur' },
+          { max: 255, message: '评论内容不得超过 255 个字符', trigger: 'blur' }
+        ],
         rating: [{ required: true, message: '请评分', trigger: 'change' }]
       }
     }

@@ -24,9 +24,10 @@
             <el-col :span="2">
               <div class="button-group">
                 <!-- 原来对不齐，套了三个div就行了 -->
-                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" @click="cancelBooking(bookingID)">退订</el-button></div>
-                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" >付款</el-button></div>
-                <div><el-button round v-if="book.bookStatus !== '已预定未入住'" type="primary" @click="review(book)">评价</el-button></div>
+                <!-- 这个地方不能直接传bookingID，传book.bookingID才行 -->
+                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" @click="cancelBooking(book.bookingID)">退订</el-button></div>
+                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" @click="payBooking(book.bookingID), payDialogVisible = true">付款</el-button></div>
+                <div><el-button round v-if="book.bookStatus === '订单已支付'" type="primary" @click="review(book)">评价</el-button></div>
               </div>
             </el-col>
           </el-row>
@@ -50,6 +51,19 @@
         </div>
       </el-dialog>
     </div>
+
+    <div>
+      <el-dialog title="支付订单" :visible.sync="payDialogVisible" width="50%">
+        <div style="text-align: center;">
+          <img src="../static/qr_code.png" alt="支付二维码" style="width: 200px;">
+          <div class="payment-buttons">
+            <el-button type="success" @click="payDialogVisible = false, payBooking(book.bookingID)">已付款</el-button>
+            <el-button @click="payDialogVisible = false">取消</el-button>
+          </div>
+        </div>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
@@ -62,6 +76,7 @@ export default {
     return {
       bookings: [],
       dialogFormVisible: false,
+      payDialogVisible: false,
       reviewForm: {
         content: '',
         rating: 0,
@@ -78,7 +93,6 @@ export default {
   },
   methods: {
     fetchBookings() {
-      
       const user = JSON.parse(localStorage.getItem('user'));
       request.get(`/book/${user.userId}`)
         .then(res => {
@@ -115,8 +129,17 @@ export default {
     },
     // 退订功能
     cancelBooking(bookingID){
-      
-      request.post(`/book/cancelBooking/${bookingID}`)
+      this.$confirm('确定要退订吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.confirmCancel(bookingID); // 用户点击确定后的操作，这里调用confirmCancel函数
+      }).catch(() => {});
+    },
+    confirmCancel(bookingID){ // 用户点击确定后的操作，取消预订
+      console.log(bookingID)
+      request.post(`/book/cancelBooking/${bookingID}`) //注意是反引号，不然不读bookingID
       .then(res => {
           if (res.code === "0") {
             this.$message.success('退订成功');
@@ -124,6 +147,12 @@ export default {
           }
         });
     },
+    //付款功能,试着扫码
+    payBooking(bookingID){
+      request.post(`/book/payBooking/${bookingID}`)
+      console.log(bookingID);
+    },
+    // 格式转化
     formatDate(dateTime){
       if (!dateTime) return '';
       // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00

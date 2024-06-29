@@ -1,22 +1,31 @@
 <template>
   <div>
-    <h1>预订信息</h1>
+    <h1>订单信息</h1>
     <el-button type="primary" @click="back()">返回主界面</el-button>
     <el-row>
       <el-col :span="24" v-for="book in bookings" :key="book.bookingID">
         <el-card :body-style="{ padding: '0px' }" class="booking-card">
           <el-row>
-            <el-col :span="8">
-              <img :src="book.hotelImage" class="hotel-image" />
+            <el-col :span="11">
+              <div style="padding: 14px">
+                <h3>订单酒店为：{{ book.hotelName }}</h3>
+                <p>入住日期: {{ formatDate(book.checkInDate) }}</p>
+                <p>登出日期: {{ formatDate(book.checkOutDate) }}</p>
+              </div>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="11">
               <div style="padding: 14px;">
-                <h3>{{ book.hotelName }}</h3>
-                <div class="name-divider"></div>
-                <p>入住日期: {{ book.checkInDate }}</p>
-                <p>登出日期: {{ book.checkOutDate }}</p>
                 <p>状态: {{ book.bookStatus }}</p>
-                <el-button type="primary" @click="review(book)">写评论</el-button>
+                <p>入住用户：{{ book.bookName }}</p>
+                <p>订单价格为：{{ book.price }}</p>
+                <p>房间类型为：{{ book.roomTypeName }}</p>
+              </div>
+            </el-col>
+            <el-col :span="2">
+              <div class="button-group">
+                <el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" >退订</el-button>
+                <el-button round v-if="book.bookStatus === '已预定未入住'" type="success" >付款</el-button>
+                <el-button round v-if="book.bookStatus !== '已预定未入住'" type="primary" @click="review(book)">评价</el-button>
               </div>
             </el-col>
           </el-row>
@@ -101,6 +110,12 @@ export default {
             });
         }
       });
+    },
+    formatDate(dateTime){
+      if (!dateTime) return '';
+      // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00
+      // 通过创建Date对象，并使用toLocaleDateString方法仅显示日期部分
+      return new Date(dateTime).toLocaleDateString();
     }
   }
 };
@@ -110,16 +125,14 @@ export default {
 .booking-card {
   margin-bottom: 20px;
 }
-
-.hotel-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+.button-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
 }
 
-.name-divider {
-  height: 1px;
-  background-color: #ddd;
-  margin: 10px 0;
-}
+
 </style>

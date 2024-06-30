@@ -1,8 +1,7 @@
 <template>
   <div>
     <div>
-      <el-input v-model="params.name" placeholder="请输入姓名" style="width: 120px"></el-input>
-      <el-input v-model="params.phone" placeholder="请输入电话" style="width: 120px; margin-left : 5px"></el-input>
+      <el-input v-model="params.name" placeholder="请输入姓名" style="width: 120px; margin-left : 5px"></el-input>
       <el-button type="warning" style="margin-left: 10px" @click="findBySearch()">查询</el-button>
       <el-button type="warning" style="margin-left: 10px" @click="reset()">清空</el-button>
       <el-button type="primary" style="margin-left: 10px" @click="add()">新增</el-button>
@@ -67,7 +66,6 @@ export default {
     return {
       params: {
         name: "",
-        phone: "",
         pageNum: 1,
         pageSize: 5
       },

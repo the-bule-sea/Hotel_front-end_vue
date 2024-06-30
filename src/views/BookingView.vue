@@ -19,7 +19,7 @@
     </div>
     <div>
       <!-- 轮播图 -->
-      <el-carousel :interval="4000">
+      <el-carousel :interval="4000" type="card">
         <el-carousel-item v-for="(image, index) in bingImages" :key="index">
           <div class="carousel-item-wrapper">
             <img :src="image" class="carousel-image" />

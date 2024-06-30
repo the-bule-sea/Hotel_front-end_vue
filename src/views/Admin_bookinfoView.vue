@@ -13,10 +13,10 @@
         style="width: 120px; margin-left: 5px"
       >
         <el-option label="全部" value></el-option>
-        <el-option label="待处理" value="待处理"></el-option>
-        <el-option label="已确认" value="已确认"></el-option>
-        <el-option label="已完成" value="已完成"></el-option>
-        <el-option label="已取消" value="已取消"></el-option>
+        <el-option label="待处理" value="已预定未入住"></el-option>
+        <el-option label="已完成" value="订单已支付"></el-option>
+        <el-option label="已评价" value="已评价"></el-option>
+        <el-option label="已取消" value="订单已取消"></el-option>
       </el-select>
       <el-button type="warning" style="margin-left: 10px" @click="findBySearch()">查询</el-button>
       <el-button type="warning" style="margin-left: 10px" @click="reset()">清空</el-button>
@@ -25,8 +25,8 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="bookingID" label="订单ID" width="100px"></el-table-column>
         <el-table-column prop="roomID" label="房间ID" width="100px"></el-table-column>
-        <el-table-column prop="formatDate.(checkInDate)" label="入住日期" width="120px"></el-table-column>
-        <el-table-column prop="formatDate.(checkOutDate)" label="退房日期" width="120px"></el-table-column>
+        <el-table-column prop="checkInDate" label="入住日期" width="120px"></el-table-column>
+        <el-table-column prop="checkOutDate" label="退房日期" width="120px"></el-table-column>
         <el-table-column prop="bookStatus" label="订单状态" width="100px"></el-table-column>
         <el-table-column prop="bookName" label="预订人姓名" width="120px"></el-table-column>
         <el-table-column prop="hotelName" label="酒店名称" width="150px"></el-table-column>
@@ -103,13 +103,8 @@ export default {
       this.params.pageNum = pageNum;
       this.load();
     },
-    // 格式转化
-    formatDate(dateTime){
-      if (!dateTime) return '';
-      // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00
-      // 通过创建Date对象，并使用toLocaleDateString方法仅显示日期部分
-      return new Date(dateTime).toLocaleDateString();
-    }
+    
+    
   }
 };
 </script>

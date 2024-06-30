@@ -104,6 +104,7 @@ export default {
       this.findBySearch();
     },
     findBySearch() {
+        console.log(this.params);
       request
         .get("/admin/searchRoominfo", {
           params: this.params

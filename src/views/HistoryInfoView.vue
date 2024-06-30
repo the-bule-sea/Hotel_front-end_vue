@@ -114,6 +114,8 @@ export default {
       this.isViewMode = false;
       this.reviewForm.bookingID = book.bookingID;
       this.dialogFormVisible = true;
+      this.reviewForm.content = '';
+      this.reviewForm.rating = 0; // 重置评分
     },
     submitReview(formName) {
       this.$refs[formName].validate((valid) => {

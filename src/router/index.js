@@ -14,6 +14,7 @@ import HistoryInfoView from '../views/HistoryInfoView.vue'
 import Admin_userView from '../views/Admin_userView.vue'
 import Admin_hotelinfoView from '../views/Admin_hotelinfoView.vue'
 import Admin_roominfoView from '../views/Admin_roominfoView.vue'
+import Admin_bookinfoView from '../views/Admin_bookinfoView.vue'
 
 Vue.use(VueRouter)
 
@@ -98,6 +99,11 @@ const routes = [
                 path: 'roominfo',
                 name: 'Admin_roominfoView',
                 component: Admin_roominfoView
+            },
+            {
+                path: 'bookinfo',
+                name: 'Admin_bookinfoView',
+                component: Admin_bookinfoView
             }
         ]
     },

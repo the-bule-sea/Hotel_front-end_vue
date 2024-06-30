@@ -25,12 +25,12 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="bookingID" label="订单ID" width="100px"></el-table-column>
         <el-table-column prop="roomID" label="房间ID" width="100px"></el-table-column>
-        <el-table-column prop="checkInDate" label="入住日期" width="120px"></el-table-column>
-        <el-table-column prop="checkOutDate" label="退房日期" width="120px"></el-table-column>
+        <el-table-column prop="formatDate.(checkInDate)" label="入住日期" width="120px"></el-table-column>
+        <el-table-column prop="formatDate.(checkOutDate)" label="退房日期" width="120px"></el-table-column>
         <el-table-column prop="bookStatus" label="订单状态" width="100px"></el-table-column>
         <el-table-column prop="bookName" label="预订人姓名" width="120px"></el-table-column>
         <el-table-column prop="hotelName" label="酒店名称" width="150px"></el-table-column>
-        <el-table-column prop="userName" label="用户名" width="150px"></el-table-column>
+        <el-table-column prop="userName" label="下单用户名" width="150px"></el-table-column>
       </el-table>
     </div>
     <div class="block" style="margin-top: 20px">
@@ -51,6 +51,8 @@
 import request from "@/utils/request";
 
 export default {
+  name: "Admin_bookinfoView",
+
   data() {
     return {
       params: {
@@ -100,6 +102,13 @@ export default {
     handleCurrentChange(pageNum) {
       this.params.pageNum = pageNum;
       this.load();
+    },
+    // 格式转化
+    formatDate(dateTime){
+      if (!dateTime) return '';
+      // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00
+      // 通过创建Date对象，并使用toLocaleDateString方法仅显示日期部分
+      return new Date(dateTime).toLocaleDateString();
     }
   }
 };

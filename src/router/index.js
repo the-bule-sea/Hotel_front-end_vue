@@ -66,8 +66,7 @@ const routes = [
     },
 
     {
-
-        path: '/admin/',
+        path: '/admin',
         name: 'LayOut',
         component: LayOutView,
         children: [

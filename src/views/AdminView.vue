@@ -9,10 +9,12 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-        <el-table-column prop="sex" label="性别" width="180"></el-table-column>
-        <el-table-column prop="age" label="年龄"></el-table-column>
+        <el-table-column prop="userName" label="姓名" width="80px"></el-table-column>
+        <el-table-column prop="points" label="积分" width="80px"></el-table-column>
+        <el-table-column prop="userType" label="用户类型" width="80px"></el-table-column>
         <el-table-column prop="phone" label="电话"></el-table-column>
+        <el-table-column prop="password" label="密码"></el-table-column>
+        <el-table-column prop="idNumber" label="身份证号"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" @click="edit(scope.row)">编辑</el-button>

@@ -45,8 +45,8 @@
             </template>
             <el-menu-item-group>
               <template slot="title">分组一</template>
-              <el-menu-item index="/admin/admin">用户信息</el-menu-item>
-              <el-menu-item index="1-2">用户信息</el-menu-item>
+              <el-menu-item index="/admin/admin">管理员信息</el-menu-item>
+              <el-menu-item index="/admin/user">用户信息</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">

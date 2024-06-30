@@ -12,7 +12,7 @@ import BookingView from '../views/BookingView.vue'
 import HotelDetailView from '../views/HotelDetailView.vue'
 import HistoryInfoView from '../views/HistoryInfoView.vue'
 import Admin_userView from '../views/Admin_userView.vue'
-
+import Admin_hotelinfoView from '../views/Admin_hotelinfoView.vue'
 
 Vue.use(VueRouter)
 
@@ -87,6 +87,11 @@ const routes = [
                 path: 'user',
                 name: 'Admin_userView',
                 component: Admin_userView
+            },
+            {
+                path: 'hotelinfo',
+                name: 'Admin_hotelinfoView',
+                component: Admin_hotelinfoView
             }
         ]
     },

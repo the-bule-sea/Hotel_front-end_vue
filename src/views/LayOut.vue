@@ -56,8 +56,8 @@
             </template>
             <el-menu-item-group>
               <template slot="title">分组一</template>
-              <el-menu-item index="1-1">xxx信息</el-menu-item>
-              <el-menu-item index="1-2">yyy信息</el-menu-item>
+              <el-menu-item index="/admin/bookinfo">订单信息</el-menu-item>
+              <el-menu-item index="/admin/hotelinfo">酒店信息</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

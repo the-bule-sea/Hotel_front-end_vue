@@ -9,6 +9,7 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="hotelID" label="酒店ID" width="150px"></el-table-column>
         <el-table-column prop="hotelName" label="酒店名" width="150px"></el-table-column>
         <el-table-column prop="city" label="城市" width="100px"></el-table-column>
         <el-table-column prop="hotelDescription" label="描述"></el-table-column>
@@ -90,6 +91,7 @@ export default {
         })
         .then(res => {
           if (res.code === "0") {
+            console.log(res.data);
             this.tableData = res.data.list;
             this.total = res.data.total;
           }
@@ -129,7 +131,7 @@ export default {
       this.load();
     },
     del(hotelID) {
-      request.delete("/hotelinfo/" + hotelID).then(res => {
+      request.delete(`/admin/deleteHotel/${hotelID}`).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",

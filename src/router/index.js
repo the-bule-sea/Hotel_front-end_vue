@@ -13,6 +13,7 @@ import HotelDetailView from '../views/HotelDetailView.vue'
 import HistoryInfoView from '../views/HistoryInfoView.vue'
 import Admin_userView from '../views/Admin_userView.vue'
 import Admin_hotelinfoView from '../views/Admin_hotelinfoView.vue'
+import Admin_roominfoView from '../views/Admin_roominfoView.vue'
 
 Vue.use(VueRouter)
 
@@ -92,6 +93,11 @@ const routes = [
                 path: 'hotelinfo',
                 name: 'Admin_hotelinfoView',
                 component: Admin_hotelinfoView
+            },
+            {
+                path: 'roominfo',
+                name: 'Admin_roominfoView',
+                component: Admin_roominfoView
             }
         ]
     },

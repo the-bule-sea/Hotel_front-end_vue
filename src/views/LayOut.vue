@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header style="background-color:lightslategray;">
-        <span style="font-size: 20px; color: white">这是一个vue测试界面</span>
+        <span style="font-size: 20px; color: white">写成旅行后台界面</span>
         <el-dropdown style="float: right; hight: 50px; line-height: 50px;">
           <span class="el-dropdown-link" style="color: white;">
             {{ user.name }}
@@ -58,6 +58,7 @@
               <template slot="title">分组一</template>
               <el-menu-item index="/admin/bookinfo">订单信息</el-menu-item>
               <el-menu-item index="/admin/hotelinfo">酒店信息</el-menu-item>
+              <el-menu-item index="/admin/roominfo">房间信息</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

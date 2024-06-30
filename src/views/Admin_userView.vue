@@ -44,20 +44,28 @@
           <el-form-item label="姓名" label-width="15%">
             <el-input v-model="form.userName" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="性别" label-width="15%">
-            <el-radio v-model="form.sex" label="男">男</el-radio>
-            <el-radio v-model="form.sex" label="女">女</el-radio>
+          <el-form-item label="积分" label-width="15%">
+            <el-input v-model="form.points" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="年龄" label-width="15%">
-            <el-input v-model="form.age" autocomplete="off"></el-input>
+          <el-form-item label="用户类型" label-width="15%">
+            <el-select v-model="form.userType" placeholder="请选择用户类型">
+              <el-option label="vip" value="vip"></el-option>
+              <el-option label="normal" value="normal"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="电话" label-width="15%">
             <el-input v-model="form.phone" autocomplete="off"></el-input>
           </el-form-item>
+          <el-form-item label="密码" label-width="15%">
+            <el-input v-model="form.password" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证号" label-width="15%">
+            <el-input v-model="form.idNumber" autocomplete="off"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submit()">确 定</el-button>
+          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="submit()">确定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -110,7 +118,8 @@ export default {
       this.dialogFormVisible = true;
     },
     submit() {
-      request.post("/admin", this.form).then(res => {
+      // 这里传的form，是json数据：前端传回：JSON数据。后台直接用user接收
+      request.post("/admin/userSaveOrUpdate", this.form).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",

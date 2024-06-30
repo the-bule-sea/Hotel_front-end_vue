@@ -38,7 +38,7 @@
     </el-row>
 
     <div>
-      <el-dialog title="评论内容" :visible.sync="dialogFormVisible" width="50%">
+      <el-dialog :title="isViewMode ? '查看评论' : '写评论'" :visible.sync="dialogFormVisible" width="50%">
         <el-form :model="reviewForm" :rules="rules" ref="reviewForm">
           <el-form-item label="评论内容" prop="content" label-width="15%">
             <el-input v-model="reviewForm.content" type="textarea"></el-input>
@@ -47,7 +47,7 @@
             <el-rate v-model="reviewForm.rating"></el-rate>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer" class="dialog-footer" v-if="!isViewMode">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitReview('reviewForm')">确 定</el-button>
         </div>
@@ -111,6 +111,7 @@ export default {
     },
     // 评价
     review(book) {
+      this.isViewMode = false;
       this.reviewForm.bookingID = book.bookingID;
       this.dialogFormVisible = true;
     },
@@ -138,6 +139,7 @@ export default {
       request.get(`/book/getviews/${bookingID}`)
       .then(res => {
         if (res.code === "0") {
+          this.isViewMode = true;
           this.dialogFormVisible = true;
           this.reviewForm.content = res.data.comment;
           this.reviewForm.rating = res.data.rating;

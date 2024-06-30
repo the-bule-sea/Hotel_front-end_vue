@@ -9,6 +9,7 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="userId" label="用户ID" width="80px"></el-table-column>
         <el-table-column prop="userName" label="姓名" width="80px"></el-table-column>
         <el-table-column prop="points" label="积分" width="80px"></el-table-column>
         <el-table-column prop="userType" label="用户类型" width="80px"></el-table-column>
@@ -18,7 +19,8 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" @click="edit(scope.row)">编辑</el-button>
-            <el-popconfirm title="确定删除吗？" @confirm="del(scope.row.id)">
+            <!-- 6.30 为了个删除事件，改了一晚上，scope是用来取当前这一行的，所以返回值得有，然后返回值id这里是userId，改了半天就是没想到这里，写了9天代码了，头疼啊啊啊啊啊 -->
+            <el-popconfirm title="确定删除吗？" @confirm="del(scope.row.userId)"> 
               <el-button slot="reference" type="danger" style="margin-left: 5px">删除</el-button>
             </el-popconfirm>
           </template>
@@ -133,8 +135,9 @@ export default {
       };
       this.load();
     },
-    del(id) {
-      request.delete(`/admin/deleteUser/${id}`).then(res => {
+    del(userId) {
+      console.log(userId);
+      request.delete(`/admin/deleteUser/${userId}`).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",

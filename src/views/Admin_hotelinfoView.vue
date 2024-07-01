@@ -9,6 +9,9 @@
     </div>
     <div>
       <el-table :data="tableData" style="width: 100%">
+        <!-- 6.30 终于知道振中之前说的是啥意思了，
+        前端接受到的数据，命名格式是按照get和set方法来的，
+        怪不得前端一直接受到的是id，但是后端的返回又是hotelID-->
         <el-table-column prop="hotelID" label="酒店ID" width="150px"></el-table-column>
         <el-table-column prop="hotelName" label="酒店名" width="150px"></el-table-column>
         <el-table-column prop="city" label="城市" width="100px"></el-table-column>
@@ -60,7 +63,7 @@
 import request from "@/utils/request";
 
 export default {
-  name: 'Admin_hotelinfoView',
+  name: "Admin_hotelinfoView",
 
   data() {
     return {
@@ -84,7 +87,7 @@ export default {
       this.findBySearch();
     },
     findBySearch() {
-        console.log(this.params);
+      console.log(this.params);
       request
         .get("/admin/searchHotelinfo", {
           params: this.params
@@ -106,7 +109,7 @@ export default {
       this.dialogFormVisible = true;
     },
     submit() {
-      request.post("/hotelinfo", this.form).then(res => {
+      request.post("/admin/hotelSaveOrUpdate", this.form).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",

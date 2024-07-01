@@ -38,7 +38,7 @@
       ></el-pagination>
     </div>
     <div>
-      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="30%">
+      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="50%">
         <el-form :model="form">
           <el-form-item label="酒店名" label-width="20%">
             <el-input v-model="form.hotelName" autocomplete="off"></el-input>

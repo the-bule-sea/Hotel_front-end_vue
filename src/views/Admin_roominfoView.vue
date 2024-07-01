@@ -45,13 +45,10 @@
       ></el-pagination>
     </div>
     <div>
-      <el-dialog title="请填写信息" :visible.sync="dialogFormVisible" width="30%">
+      <el-dialog title="请填写房间信息" :visible.sync="dialogFormVisible" width="50%">
         <el-form :model="form">
-          <el-form-item label="房间ID" label-width="15%">
-            <el-input v-model="form.roomID" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="酒店ID" label-width="15%">
-            <el-input v-model="form.hotelID" autocomplete="off"></el-input>
+          <el-form-item label="所属酒店名" label-width="15%">
+            <el-input v-model="form.hotelName" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="价格" label-width="15%">
             <el-input v-model="form.price" autocomplete="off"></el-input>
@@ -127,7 +124,7 @@ export default {
     },
     // 提交数据
     submit() {
-      request.post("/admin/roominfo", this.form).then(res => {
+      request.post("/admin/roomSaveOrUpdate", this.form).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",
@@ -154,8 +151,9 @@ export default {
       this.load();
     },
     // 删除
-    del(id) {
-      request.delete("/admin/roominfo/" + id).then(res => {
+    del(roomID) {
+      console.log(roomID);
+      request.delete(`/admin/deleteRoom/${roomID}`).then(res => {
         if (res.code === "0") {
           this.$message({
             type: "success",

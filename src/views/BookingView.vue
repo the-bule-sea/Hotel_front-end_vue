@@ -28,7 +28,7 @@
       </el-carousel>
     </div>
     <div>
-      <h1>HotelInfo</h1>
+      <h1>酒店信息</h1>
       <el-row>
         <el-col :span="24" v-for="hotel in hotels" :key="hotel.id">
           <el-card :body-style="{ padding: '0px' }" @click.native="goToDetail(hotel)">

@@ -19,22 +19,14 @@
             <img src="../static/Hotel_logo2.png" style="width: 150px; position: relative; " />
           </a>
           <el-menu-item index="/user">购票大厅</el-menu-item>
-          <el-submenu index="2">
-            <template slot="title">我的工作台</template>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-            <el-menu-item index="2-3">选项3</el-menu-item>
-            <el-submenu index="2-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="2-4-1">选项1</el-menu-item>
-              <el-menu-item index="2-4-2">选项2</el-menu-item>
-              <el-menu-item index="2-4-3">选项3</el-menu-item>
-            </el-submenu>
-          </el-submenu>
           <el-menu-item index="3" disabled>消息中心</el-menu-item>
           <el-menu-item index="/user/historybook">订单管理</el-menu-item>
           
           <div style="margin-left:auto; margin-right:30px; display: flex; align-items: center;">
+            <p>
+                <span style="margin-right: 20px; color:#409EFF" v-if="isVIP">尊敬的VIP用户，欢迎来到写成旅行网</span>
+                <span style="margin-right: 20px;" v-else>欢迎来到写成旅行网</span>
+            </p>
             <el-dropdown>
                 <span class="el-dropdown-link" style="color: black;">
                 {{ user.userName }}
@@ -108,17 +100,23 @@
 
 
 <script>
+
+import request from '@/utils/request';
+
 export default {
   name: "HotelLayOut",
   data() {
     return {
+      isVIP: false,
       user: localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user"))
         : {} //判断有无，若无则返回{}，若有则转化为JSON返回
     };
   },
 
-  mounted() {},
+  mounted() {
+    this.fetchStauts();
+  },
   methods: {
     logout() {
       console.log("退出登录test");
@@ -129,6 +127,19 @@ export default {
     },
     goToHistory(){
       this.$router.push({name: "HistoryInfoView"});
+    },
+    fetchStauts(){
+      const user = JSON.parse(localStorage.getItem('user'));
+      request.get(`/user/userStatus/${user.userId}`)
+        .then(res =>{
+          if(res.code === "0"){
+            if(res.data.userType === "vip"){
+              this.isVIP = true; // 设置为vip
+            }else{
+              this.isVIP = false; // 设置为非vip
+            }
+          }
+        });
     }
   }
 };

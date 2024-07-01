@@ -13,9 +13,6 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" @click="edit(scope.row)">编辑</el-button>
-            <el-popconfirm title="确定删除吗？" @confirm="del(scope.row.id)">
-              <el-button slot="reference" type="danger" style="margin-left: 5px">删除</el-button>
-            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -140,23 +137,7 @@ export default {
       };
       this.load();
     },
-    //删除
-    del(id) {
-      request.delete("/admin/" + id).then(res => {
-        if (res.code === "0") {
-          this.$message({
-            type: "success",
-            message: "删除成功"
-          });
-        } else {
-          this.$message({
-            type: "error",
-            message: res.msg
-          });
-        }
-        this.findBySearch();
-      });
-    },
+    
     // 方框中的每页显示个数
     handleSizeChange(pageSize) {
       this.params.pageSize = pageSize;

@@ -17,7 +17,10 @@
             <el-col :span="9">
               <div style="padding: 9px;">
                 <p>入住用户：{{ book.bookName }}</p>
-                <p>订单价格为：{{ book.price }}</p>
+                <p>
+                  <span v-if="isVIP">VIP价格为：{{ calculatePrice(book.price) }}</span>
+                  <span v-else>订单价格为：{{ book.price }}</span>
+                </p>
                 <p>房间类型为：{{ book.roomTypeName }}</p>
                 <p>房间号为：{{ book.roomID }}</p>
               </div>
@@ -57,6 +60,7 @@
     <div>
       <el-dialog title="支付订单" :visible.sync="payDialogVisible" width="50%">
         <div style="text-align: center;">
+
           <img src="../static/qr_code.png" alt="支付二维码" style="width: 200px;">
           <div class="payment-buttons">
             <el-button type="success" @click="payDialogVisible = false, payBooking(book.bookingID)">已付款</el-button>
@@ -77,6 +81,7 @@ export default {
   data() {
     return {
       bookings: [],
+      isVIP: false, // 判断是否为vip
       dialogFormVisible: false,
       payDialogVisible: false,
       reviewForm: {
@@ -103,6 +108,16 @@ export default {
         .then(res => {
           if (res.code === "0") {
             this.bookings = res.data;
+          }
+        });
+      request.get(`/user/userStatus/${user.userId}`)
+        .then(res =>{
+          if(res.code === "0"){
+            if(res.data.userType === "vip"){
+              this.isVIP = true; // 设置为vip
+            }else{
+              this.isVIP = false; // 设置为非vip
+            }
           }
         });
     },
@@ -187,7 +202,11 @@ export default {
       // 原来的数据长这样的：checkInDate=2024-06-27T08:00, checkOutDate=2024-07-24T08:00
       // 通过创建Date对象，并使用toLocaleDateString方法仅显示日期部分
       return new Date(dateTime).toLocaleDateString();
-    }
+    },
+    // vip价格返回
+    calculatePrice(price) {
+      return this.isVIP ? (price * 0.9).toFixed(2) : price.toFixed(2);
+    },
   }
 };
 </script>

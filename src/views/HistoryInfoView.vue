@@ -173,6 +173,12 @@ export default {
     //付款功能,试着扫码
     payBooking(bookingID){
       request.post(`/book/payBooking/${bookingID}`)
+      .then(res => {
+        if(res.code === "0"){
+          this.message.success('付款成功！');
+          this.fetchBookings();
+        }
+      })
       console.log(bookingID);
     },
     // 格式转化

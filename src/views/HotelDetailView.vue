@@ -4,7 +4,7 @@
     <!-- 返回按钮 -->
     <el-button type="primary" @click="back()">返回主界面</el-button>
     <h2>{{ hotel.hotelName }}</h2>
-    <p>酒店ID: {{ hotel.id }}</p>
+    <p>酒店ID: {{ hotel.hotelID }}</p>
     <p>城市: {{ hotel.city }}</p>
     <p>介绍: {{ hotel.hotelDescription }}</p>
     <!-- 其他酒店信息展示 -->
@@ -167,7 +167,7 @@ export default {
   methods: {
     fetchHotelDetail() {
       request
-        .get(`/hotel/${this.hotel.id}`) //注意反引号
+        .get(`/hotel/${this.hotel.hotelID}`) //注意反引号
         .then(res => {
           if (res.code === "0") {
             this.rooms = res.data;
@@ -198,6 +198,7 @@ export default {
         );
       };
     },
+    // 预定
     submit(formname) {
       this.$refs[formname].validate(valid => {
         if (valid) {
@@ -205,7 +206,7 @@ export default {
           const hotel = JSON.parse(localStorage.getItem("currentHotel"));
           const bookinfo = {
             userID: user.userId,
-            hotelID: hotel.id,
+            hotelID: hotel.hotelID,
             roomID: this.currentRoomId,
             bookName: this.bookform.name,
             idNumber: this.bookform.idNumber,

@@ -30,7 +30,7 @@
                 <!-- 原来对不齐，套了三个div就行了 -->
                 <!-- 这个地方不能直接传bookingID，传book.bookingID才行 -->
                 <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="danger" @click="cancelBooking(book.bookingID)">退订</el-button></div>
-                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" @click="payBooking(book.bookingID), payDialogVisible = true">付款</el-button></div>
+                <div><el-button round v-if="book.bookStatus === '已预定未入住'" type="success" @click="payDialogVisible = true" >付款</el-button></div>
                 <div><el-button round v-if="book.bookStatus === '订单已支付'" type="primary" @click="review(book)">评价</el-button></div>
                 <div><el-button round v-if="book.bookStatus === '已评价'" type="primary" @click="viewReview(book.bookingID)">查看评价</el-button></div>
               </div>
@@ -60,7 +60,6 @@
     <div>
       <el-dialog title="支付订单" :visible.sync="payDialogVisible" width="50%">
         <div style="text-align: center;">
-
           <img src="../static/qr_code.png" alt="支付二维码" style="width: 200px;">
           <div class="payment-buttons">
             <el-button type="success" @click="payDialogVisible = false, payBooking(book.bookingID)">已付款</el-button>
@@ -190,7 +189,7 @@ export default {
       request.post(`/book/payBooking/${bookingID}`)
       .then(res => {
         if(res.code === "0"){
-          this.message.success('付款成功！');
+          this.$message.success('付款成功！');
           this.fetchBookings();
         }
       })

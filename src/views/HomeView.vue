@@ -9,6 +9,21 @@
         <div id="orderChart" style="width: 100%; height: 400px;"></div>
       </div>
     </div>
+    <div style="margin-top: 20px;">
+      <div style="margin-bottom: 10px;">房间入住率统计,请输入时间范围</div>
+      <el-date-picker
+        v-model="dateRange"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="margin-right: 10px;"
+      ></el-date-picker>
+      <el-button type="primary" @click="loadRoomOccupancyRate">查询</el-button>
+    </div>
+    <div style="margin-top: 20px;">
+      <div id="roomOccupancyRateChart" style="width: 100%; height: 400px;"></div>
+    </div>
   </div>
 </template>
 
@@ -18,6 +33,11 @@ import request from "@/utils/request";
 
 export default {
   name: "HomeView",
+  data() {
+    return {
+      dateRange: []
+    };
+  },
   mounted() {
     this.initHotelChart();
     this.initOrderChart();
@@ -108,8 +128,59 @@ export default {
           this.$message.error(res.msg);
         }
       });
+    },
+    loadRoomOccupancyRate() {
+      let startDate = this.dateRange[0];
+      let endDate = this.dateRange[1];
+
+      request
+        .get("/admin/getRoomOccupancyRate", {
+          params: {
+            startDate: startDate,
+            endDate: endDate
+          }
+        })
+        .then(res => {
+          if (res.code === "0") {
+            let occupancyRateData = res.data;
+
+            let chartDom = document.getElementById("roomOccupancyRateChart");
+            let myChart = echarts.init(chartDom);
+
+            let option = {
+              title: {
+                text: "客房入住率(次数)",
+                left: "center"
+              },
+              tooltip: {
+                trigger: "item"
+              },
+              legend: {
+                orient: "vertical",
+                left: "left"
+              },
+              xAxis: {
+                type: "category",
+                data: occupancyRateData.map(item => item.roomTypeName)
+              },
+              yAxis: {
+                type: "value"
+              },
+              series: [
+                {
+                  name: "入住率(次数)",
+                  type: "bar",
+                  data: occupancyRateData.map(item => item.bookingCount)
+                }
+              ]
+            };
+
+            myChart.setOption(option);
+          } else {
+            this.$message.error(res.msg);
+          }
+        });
     }
   }
 };
 </script>
-

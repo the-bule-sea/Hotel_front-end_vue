@@ -3,7 +3,10 @@
 
 
 ## Project setup
-## 安装依赖
+## 源神启动
+```
+git clone https://github.com/the-bule-sea/Hotel_front-end_vue.git
+```
 ```
 npm install
 ```

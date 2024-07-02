@@ -1,4 +1,6 @@
-# springboot_vue
+# This is a hotel front-end built using the Vue framework, designed to be used in conjunction with my other hotel back-end.
+# [此项目的配套酒店后端](https://github.com/the-bule-sea/Hotel_back-end_springboot)
+
 
 ## Project setup
 ## 安装依赖
